@@ -22,6 +22,7 @@ defmodule TwtrWeb.Router do
 
     get "/", PageController, :index
     resources "/tweets", TweetController
+    post "/tweets/like/:tweet_id", TweetController, :like
   end
 
   # Other scopes may use custom stacks.

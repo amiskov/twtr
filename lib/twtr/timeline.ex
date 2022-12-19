@@ -7,6 +7,8 @@ defmodule Twtr.Timeline do
   alias Twtr.Repo
 
   alias Twtr.Timeline.Tweet
+  alias Twtr.Timeline.Like
+  alias Twtr.Accounts.User
 
   @doc """
   Returns the list of tweets.
@@ -100,5 +102,17 @@ defmodule Twtr.Timeline do
   """
   def change_tweet(%Tweet{} = tweet, attrs \\ %{}) do
     Tweet.changeset(tweet, attrs)
+  end
+
+  def toggle_like(tweet_id, user_id) do
+    case Repo.get_by(Like, tweet_id: tweet_id, user_id: user_id) do
+      %Like{} = like ->
+        Repo.delete(like)
+
+      nil ->
+        %Like{}
+        |> Like.changeset(%{tweet_id: tweet_id, user_id: user_id})
+        |> Repo.insert()
+    end
   end
 end

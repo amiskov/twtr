@@ -3,6 +3,7 @@ defmodule TwtrWeb.TweetController do
 
   alias Twtr.Timeline
   alias Twtr.Timeline.Tweet
+  alias Twtr.Timeline.Like
 
   def index(conn, _params) do
     tweets = Timeline.list_tweets()
@@ -37,6 +38,20 @@ defmodule TwtrWeb.TweetController do
     tweet = Timeline.get_tweet!(id)
     changeset = Timeline.change_tweet(tweet)
     render(conn, "edit.html", tweet: tweet, changeset: changeset)
+  end
+
+  def like(conn, %{"tweet_id" => tweet_id}) do
+    %Plug.Conn{assigns: %{current_user: current_user}} = conn
+
+    case Timeline.toggle_like(tweet_id, current_user.id) do
+      {:ok, like} ->
+        conn
+        |> put_flash(:info, "You liked a tweet!")
+        |> redirect(to: Routes.tweet_path(conn, :index))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        render(conn, "index.html", changeset: changeset)
+    end
   end
 
   def update(conn, %{"id" => id, "tweet" => tweet_params}) do
