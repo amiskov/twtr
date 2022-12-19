@@ -5,7 +5,7 @@ defmodule Twtr.Timeline.Like do
   @primary_key false  
   schema "likes" do
     field :tweet_id, :integer, primary_key: true
-    belongs_to :user, Twtr.Accounts.User
+    field :user_id, :integer, primary_key: true
 
     timestamps()
   end

@@ -44,13 +44,19 @@ defmodule TwtrWeb.TweetController do
     %Plug.Conn{assigns: %{current_user: current_user}} = conn
 
     case Timeline.toggle_like(tweet_id, current_user.id) do
-      {:ok, like} ->
+      {:deleted, {:ok, _}} ->
+        conn
+        |> put_flash(:info, "Like has beed removed!")
+        |> redirect(to: Routes.tweet_path(conn, :index))
+        
+      {:inserted, {:ok, _}} ->
         conn
         |> put_flash(:info, "You liked a tweet!")
         |> redirect(to: Routes.tweet_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "index.html", changeset: changeset)
+        conn
+        |> render("index.html", changeset: changeset)
     end
   end
 

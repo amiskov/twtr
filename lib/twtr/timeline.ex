@@ -20,21 +20,11 @@ defmodule Twtr.Timeline do
 
   """
   def list_tweets do
-    # select tweets.id, tweets.text, tweets.user_id, tweets.inserted_at, tweets.updated_at, count(likes.tweet_id) as likes_count from tweets
-    # join likes on tweets.id = likes.tweet_id
-    # group by tweets.id;
-    # query = from(t in Tweet,
-    #   join: l in Like, on: t.id == l.tweet_id,
-    #   group_by: :tweet_id,
-    #   select: *)
-    q = Tweet \
-    |> join(:inner, [t], l in Like, on: t.id == l.tweet_id) \
-    |> group_by([t], t.id) \
-    |> select([t], %{t | likes: count(t.id)})
-    #   # select: %{id: c.id, row_number: over(row_number(), :posts_partition)},
-
-    # # Post |> group_by([p], p.category) |> select([p], count(p.id))
-    Repo.all(q)
+    Tweet
+    |> join(:left, [t], l in Like, on: t.id == l.tweet_id)
+    |> group_by([t], t.id)
+    |> select([t, l], %{t | likes: count(l.tweet_id)})
+    |> Repo.all()
   end
 
   @doc """
@@ -121,12 +111,14 @@ defmodule Twtr.Timeline do
   def toggle_like(tweet_id, user_id) do
     case Repo.get_by(Like, tweet_id: tweet_id, user_id: user_id) do
       %Like{} = like ->
-        Repo.delete(like)
+        l = Repo.delete(like)
+        {:deleted, l}
 
       nil ->
-        %Like{}
+        l = %Like{}
         |> Like.changeset(%{tweet_id: tweet_id, user_id: user_id})
         |> Repo.insert()
+        {:inserted, l}
     end
   end
 end

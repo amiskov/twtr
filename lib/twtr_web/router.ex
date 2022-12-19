@@ -20,9 +20,9 @@ defmodule TwtrWeb.Router do
   scope "/", TwtrWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    resources "/tweets", TweetController
-    post "/tweets/like/:tweet_id", TweetController, :like
+    # get "/", PageController, :index
+    resources "/", TweetController
+    post "/like/:tweet_id", TweetController, :like
   end
 
   # Other scopes may use custom stacks.
