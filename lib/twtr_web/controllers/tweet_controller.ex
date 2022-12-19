@@ -6,7 +6,7 @@ defmodule TwtrWeb.TweetController do
   alias Twtr.Timeline.Like
 
   def index(conn, _params) do
-    tweets = Timeline.list_tweets()
+    tweets = Timeline.list_tweets() |> IO.inspect
     render(conn, "index.html", tweets: tweets)
   end
 
