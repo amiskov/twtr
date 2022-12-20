@@ -1,5 +1,22 @@
 # Twtr
 
+## API TODO
+- [ ] Users
+  - [x] `POST /api/sign_in`
+  - [ ] Log Out
+  - [ ] Register
+- [ ] Tweets CRUD
+  - [x] `GET  /api/tweets`
+  - [x] `GET  /api/tweets/:id`
+  - [x] `POST /api/tweets` + auth
+  - [ ] `PUT  /api/tweets` + auth
+- [ ] Replies
+  - [x] Add replies to tweet endpoint
+  - [ ] Create reply
+- [ ] Likes
+  - [ ] Liked tweets for auth user
+- [ ] Followers
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
