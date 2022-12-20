@@ -3,6 +3,7 @@ defmodule TwtrWeb.TweetController do
 
   alias Twtr.Timeline
   alias Twtr.Timeline.Tweet
+  alias Twtr.Guardian
 
   def index(conn, _params) do
     tweets = Timeline.list_tweets()
@@ -14,6 +15,7 @@ defmodule TwtrWeb.TweetController do
     render(conn, "new.html", changeset: changeset)
   end
 
+  # HTML
   def create(conn, %{"tweet" => tweet_params}) do
     %Plug.Conn{assigns: %{current_user: current_user}} = conn
     params = Map.put(tweet_params, "user_id", current_user.id)
@@ -29,24 +31,18 @@ defmodule TwtrWeb.TweetController do
     end
   end
 
-  # json
+  # API
   def create(conn, tweet_params) do
-    # %{"text" => text} = tweet_params
-    conn |> IO.inspect
-    # %Plug.Conn{assigns: %{current_user: current_user}} = conn
-    # params = Map.put(tweet_params, "user_id", current_user.id)
+    user = Guardian.Plug.current_resource(conn) |> IO.inspect()
+    params = Map.put(tweet_params, "user_id", user.id)
 
-    # case Timeline.create_tweet(params) do
-    #   {:ok, tweet} ->
-    #     conn
-    #     |> put_flash(:info, "Tweet created successfully.")
-    #     |> redirect(to: Routes.tweet_path(conn, :show, tweet))
+    case Timeline.create_tweet(params) do
+      {:ok, tweet} ->
+        render(conn, :show, tweet: tweet, replies: [])
 
-    #   {:error, %Ecto.Changeset{} = changeset} ->
-    #     render(conn, "new.html", changeset: changeset)
-    # end
-    tweets = Timeline.list_tweets()
-    render(conn, :index, tweets: tweets)
+      {:error, _changeset} ->
+        render(conn, :show, tweet: %Tweet{}, replies: [])
+    end
   end
 
   def show(conn, %{"id" => id}) do

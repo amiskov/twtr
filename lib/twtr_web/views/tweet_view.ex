@@ -18,7 +18,7 @@ defmodule TwtrWeb.TweetView do
     %{
       id: tweet.id,
       text: tweet.text,
-      replies: tweet.replies
+      likes: tweet.likes
     }
   end
 end

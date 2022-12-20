@@ -13,6 +13,11 @@ defmodule TwtrWeb.Router do
     plug(:fetch_current_user)
   end
 
+  pipeline :api_authenticated do
+    plug(:accepts, ["json"])
+    plug TwtrWeb.AuthAccessPipeline
+  end
+
   pipeline :api do
     plug(:accepts, ["json"])
   end
@@ -31,7 +36,14 @@ defmodule TwtrWeb.Router do
   scope "/api", TwtrWeb do
     pipe_through(:api)
 
-    resources("/tweets", TweetController)
+    resources("/tweets", TweetController, only: [:index, :show])
+    post "/sign_in", Api.SessionController, :create
+  end
+
+  scope "/api", TwtrWeb, as: :api do
+    pipe_through :api_authenticated
+
+    resources("/tweets", TweetController, except: [:index, :show])
   end
 
   # Enables LiveDashboard only for development

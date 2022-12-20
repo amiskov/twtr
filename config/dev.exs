@@ -29,6 +29,9 @@ config :twtr, TwtrWeb.Endpoint,
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
+config :twtr, Twtr.Guardian,
+  secret_key: "Q58tVScKEtaKQm+f4upyJ0JV2mKKs3hE1waxq/LioZjBSGAdtrw1eSTSEQv1uZ6G"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

@@ -10,6 +10,15 @@ import Config
 config :twtr,
   ecto_repos: [Twtr.Repo]
 
+config :twtr, Twtr.Guardian,
+  issuer: "twtr",
+  secret_key: "Secret key. You can use `mix guardian.gen.secret` to get one",
+  ttl: {3, :days}
+
+config :twtr, TwtrWeb.AuthAccessPipeline,
+  module: Twtr.Guardian,
+  error_handler: TwtrWeb.AuthErrorHandler
+
 # Configures the endpoint
 config :twtr, TwtrWeb.Endpoint,
   url: [host: "localhost"],

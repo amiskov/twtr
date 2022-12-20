@@ -5,7 +5,6 @@ defmodule Twtr.Timeline.Tweet do
   schema "tweets" do
     field :text, :string
     field :likes, :integer, virtual: true, redact: true
-    field :replies, :integer, virtual: true, redact: true
 
     belongs_to :user, Twtr.Accounts.User
 
