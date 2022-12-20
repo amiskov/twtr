@@ -9,5 +9,8 @@
   </p>
 <% end %>
 
-<span><%= link "Edit", to: Routes.tweet_path(@conn, :edit, @tweet) %></span> |
+<%= if @current_user do %>
+  <span><%= link "Edit", to: Routes.tweet_path(@conn, :edit, @tweet) %></span> |
+<% end %>
+
 <span><%= link "Back", to: Routes.tweet_path(@conn, :index) %></span>

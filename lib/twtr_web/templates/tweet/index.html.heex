@@ -3,22 +3,26 @@
 <table>
   <thead>
     <tr>
-      <th>Text</th>
-
+      <th>Top Level Tweets</th>
       <th></th>
     </tr>
   </thead>
   <tbody>
 <%= for tweet <- @tweets do %>
     <tr>
-      <td><b><%= tweet.id %></b><%= tweet.text %></td>
-
-      <td>
+      <td width="100%"><%= tweet.text %> <sup><small style="color: gray"><%= tweet.id %></small></sup></td>
+      <td style="white-space: nowrap;">
         <span><%= link "Show", to: Routes.tweet_path(@conn, :show, tweet) %></span>
-        <span><%= # link "Edit", to: Routes.tweet_path(@conn, :edit, tweet) %></span>
-        <span><%= link "Reply (#{tweet.replies})", to: Routes.tweet_path(@conn, :reply, tweet) %></span>
-        <%= link("♥#{tweet.likes}", to: "/like/" <> to_string(tweet.id), method: :post) %>
-        <span><%= # link "Delete", to: Routes.tweet_path(@conn, :delete, tweet), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        &nbsp;
+        <%= if @current_user do %>
+          <span><%= # link "Edit", to: Routes.tweet_path(@conn, :edit, tweet) %></span>
+        &nbsp;
+          <span><%= link "🔁 #{tweet.replies}", to: Routes.tweet_path(@conn, :reply, tweet) %></span>
+        &nbsp;
+          <%= link("❤️ #{tweet.likes}", to: "/like/" <> to_string(tweet.id), method: :post) %>
+        &nbsp;
+          <span><%= # link "Delete", to: Routes.tweet_path(@conn, :delete, tweet), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <% end %>
       </td>
     </tr>
 <% end %>
