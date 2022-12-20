@@ -1,13 +1,13 @@
 <h1>Show Tweet</h1>
 
-<ul>
+<p><%= @tweet.text %></p>
 
-  <li>
-    <strong>Text:</strong>
-    <%= @tweet.text %>
-  </li>
-
-</ul>
+<%= for r <- @replies do %>
+  <p>
+    <b><%= r.id %></b> - 
+    <%= r.text %>
+  </p>
+<% end %>
 
 <span><%= link "Edit", to: Routes.tweet_path(@conn, :edit, @tweet) %></span> |
 <span><%= link "Back", to: Routes.tweet_path(@conn, :index) %></span>

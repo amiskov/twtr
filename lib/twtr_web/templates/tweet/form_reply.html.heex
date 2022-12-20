@@ -5,7 +5,8 @@
     </div>
   <% end %>
 
-  <%= label f, :text %>
+  <%= label f, :text, "Your reply" %>
+  <%= text_input f, :topic_tweet_id, value: @conn.assigns.topic.id %>
   <%= text_input f, :text %>
   <%= error_tag f, :text %>
 

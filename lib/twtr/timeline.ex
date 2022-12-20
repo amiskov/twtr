@@ -8,7 +8,12 @@ defmodule Twtr.Timeline do
 
   alias Twtr.Timeline.Tweet
   alias Twtr.Timeline.Like
-  alias Twtr.Accounts.User
+  alias Twtr.Timeline.Reply
+
+  def print_sql(queryable) do
+    IO.inspect(Ecto.Adapters.SQL.to_sql(:all, Repo, queryable))
+    queryable
+  end
 
   @doc """
   Returns the list of tweets.
@@ -17,13 +22,14 @@ defmodule Twtr.Timeline do
 
       iex> list_tweets()
       [%Tweet{}, ...]
-
   """
   def list_tweets do
     Tweet
+    |> distinct(true)
     |> join(:left, [t], l in Like, on: t.id == l.tweet_id)
-    |> group_by([t], t.id)
-    |> select([t, l], %{t | likes: count(l.tweet_id)})
+    |> join(:left, [t], r in Reply, on: t.id == r.topic_id)
+    |> group_by([t, _, r], [t.id, r.reply_id])
+    |> select([t, l, r], %{t | likes: count(l.tweet_id), replies: count(r.reply_id)})
     |> Repo.all()
   end
 
@@ -43,6 +49,18 @@ defmodule Twtr.Timeline do
   """
   def get_tweet!(id), do: Repo.get!(Tweet, id)
 
+  def get_tweet_with_replies!(id) do
+    tweet = Repo.get!(Tweet, id)
+
+    replies =
+      Tweet
+      |> join(:inner, [t], r in Reply, on: t.id == r.reply_id)
+      |> where([_t, r], r.topic_id == ^tweet.id)
+      |> Repo.all()
+
+    %{tweet: tweet, replies: replies}
+  end
+
   @doc """
   Creates a tweet.
 
@@ -58,6 +76,12 @@ defmodule Twtr.Timeline do
   def create_tweet(attrs \\ %{}) do
     %Tweet{}
     |> Tweet.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_reply(attrs \\ %{}) do
+    %Reply{}
+    |> Reply.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -115,9 +139,11 @@ defmodule Twtr.Timeline do
         {:deleted, l}
 
       nil ->
-        l = %Like{}
-        |> Like.changeset(%{tweet_id: tweet_id, user_id: user_id})
-        |> Repo.insert()
+        l =
+          %Like{}
+          |> Like.changeset(%{tweet_id: tweet_id, user_id: user_id})
+          |> Repo.insert()
+
         {:inserted, l}
     end
   end

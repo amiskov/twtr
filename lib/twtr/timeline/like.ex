@@ -7,6 +7,9 @@ defmodule Twtr.Timeline.Like do
     field :tweet_id, :integer, primary_key: true
     field :user_id, :integer, primary_key: true
 
+    # belongs_to :user, Twtr.Accounts.User
+    # belongs_to :tweet, Twtr.Timeline.Tweet
+
     timestamps()
   end
 

@@ -14,8 +14,9 @@
       <td><b><%= tweet.id %></b><%= tweet.text %></td>
 
       <td>
-        <span><%= # link "Show", to: Routes.tweet_path(@conn, :show, tweet) %></span>
+        <span><%= link "Show", to: Routes.tweet_path(@conn, :show, tweet) %></span>
         <span><%= # link "Edit", to: Routes.tweet_path(@conn, :edit, tweet) %></span>
+        <span><%= link "Reply (#{tweet.replies})", to: Routes.tweet_path(@conn, :reply, tweet) %></span>
         <%= link("♥#{tweet.likes}", to: "/like/" <> to_string(tweet.id), method: :post) %>
         <span><%= # link "Delete", to: Routes.tweet_path(@conn, :delete, tweet), method: :delete, data: [confirm: "Are you sure?"] %></span>
       </td>
